@@ -13,17 +13,53 @@ import java.util.ArrayList;
 
 public class ExampleAdapter extends RecyclerView.Adapter<ExampleAdapter.ExampleViewHolder> {
     private ArrayList<ExampleItem> exampleItems;
+    private OnItemClickListener itemClickListener;
+
+    public interface OnItemClickListener {
+        void onItemClick(int position);
+        void onDeleteClick(int position);
+    }
+
+    public void setOnItemClickListener(OnItemClickListener listener) {
+        itemClickListener = listener;
+    }
 
     public static class ExampleViewHolder extends RecyclerView.ViewHolder {
         public ImageView imageViewExampleItem;
         public TextView textViewOneItem;
         public TextView textViewTwoItem;
+        public ImageView imageViewDeleteIcon;
 
-        public ExampleViewHolder(@NonNull View itemView) {
+        public ExampleViewHolder(@NonNull View itemView, final OnItemClickListener listener) {
             super(itemView);
             imageViewExampleItem = itemView.findViewById(R.id.imageView);
             textViewOneItem = itemView.findViewById(R.id.textViewOne);
             textViewTwoItem = itemView.findViewById(R.id.textViewTwo);
+            imageViewDeleteIcon = itemView.findViewById(R.id.deleteIcon);
+
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (listener != null) {
+                        int position = getAdapterPosition();
+                        if (position != RecyclerView.NO_POSITION) {
+                            listener.onItemClick(position);
+                        }
+                    }
+                }
+            });
+
+            imageViewDeleteIcon.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (listener != null) {
+                        int position = getAdapterPosition();
+                        if (position != RecyclerView.NO_POSITION) {
+                            listener.onDeleteClick(position);
+                        }
+                    }
+                }
+            });
         }
     }
 
@@ -36,7 +72,7 @@ public class ExampleAdapter extends RecyclerView.Adapter<ExampleAdapter.ExampleV
     @Override
     public ExampleViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.example_item, parent, false);
-        ExampleViewHolder exampleViewHolder = new ExampleViewHolder(view);
+        ExampleViewHolder exampleViewHolder = new ExampleViewHolder(view, itemClickListener);
         return exampleViewHolder;
     }
 

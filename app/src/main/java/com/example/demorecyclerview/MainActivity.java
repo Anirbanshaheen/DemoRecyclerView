@@ -9,9 +9,8 @@ import android.os.Bundle;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
-
     private RecyclerView recyclerView;
-    private RecyclerView.Adapter recyclerViewAdapter;
+    private ExampleAdapter exampleAdapter;
     private RecyclerView.LayoutManager recyclerViewLayoutManager;
 
     @Override
@@ -21,7 +20,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         // Data list
-        ArrayList<ExampleItem> exampleItems = new ArrayList<>();
+        final ArrayList<ExampleItem> exampleItems = new ArrayList<>();
         // 12 items
         exampleItems.add(new ExampleItem(R.drawable.ic_android_black, "Line One", "Line Two"));
         exampleItems.add(new ExampleItem(R.drawable.ic_video_label_black, "Line Three", "Line Four"));
@@ -43,9 +42,23 @@ public class MainActivity extends AppCompatActivity {
         recyclerView = findViewById(R.id.recyclerViewId);
         recyclerView.setHasFixedSize(true);
         recyclerViewLayoutManager = new LinearLayoutManager(this);
-        recyclerViewAdapter = new ExampleAdapter(exampleItems);
+        exampleAdapter = new ExampleAdapter(exampleItems);
 
         recyclerView.setLayoutManager(recyclerViewLayoutManager);
-        recyclerView.setAdapter(recyclerViewAdapter);
+        recyclerView.setAdapter(exampleAdapter);
+
+        exampleAdapter.setOnItemClickListener(new ExampleAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(int position) {
+                exampleItems.get(position).changeText(" Clicked it ");
+                exampleAdapter.notifyItemChanged(position);
+            }
+
+            @Override
+            public void onDeleteClick(int position) {
+                exampleItems.remove(position);
+                exampleAdapter.notifyItemRemoved(position);
+            }
+        });
     }
 }

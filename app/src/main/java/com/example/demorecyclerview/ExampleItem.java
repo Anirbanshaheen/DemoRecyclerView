@@ -12,6 +12,10 @@ public class ExampleItem {
         this.textTwo = textTwo;
     }
 
+    public void changeText(String text){
+        textOne = text;
+    }
+
     public int getImageResource() {
         return imageResource;
     }
